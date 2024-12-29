@@ -3,40 +3,44 @@ import Swal from "sweetalert2";
 import UseAuth from "../../Hooks/UseAuth";
 
 const AddJobs = () => {
-  const {user} = UseAuth()
-    const handleAddJobs= e=>{
-        e.preventDefault()
-        const formData = new FormData(e.target)
-        // console.log(formData.entries())
-        const initialData = Object.fromEntries(formData.entries())
-        // console.log(initialData)
-        const {salaryMin , salaryMax ,currency, ...newJob}=initialData
-        // console.log(newJob)
-        newJob.salaryRange ={salaryMin, salaryMax , currency}
-        newJob.requirements =newJob.requirements.split('\n')
-        newJob.responsibilities =newJob.responsibilities.split('\n')
-        // console.log(newJob)
-        fetch('https://job-portal-server-livid.vercel.app/jobs',{
-            method:'POST',
-            headers:{
-                'content-type':'application/json'
-            },
-            body:JSON.stringify(newJob)
-        })
-        .then(res=>res.json())
-        .then(data =>{
-             if(data.insertedId){
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: "Job has been Added",
-                                showConfirmButton: false,
-                                timer: 1500
-                              });
-                              // navigate("/myApplication")
-                        }
-        })
-    }
+  const { user } = UseAuth();
+  const handleAddJobs = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    // console.log(formData.entries())
+    const initialData = Object.fromEntries(formData.entries());
+    // console.log(initialData)
+    const { salaryMin, salaryMax, currency, ...newJob } = initialData;
+    // console.log(newJob)
+    newJob.salaryRange = {
+      salaryMin: parseInt(salaryMin),
+      salaryMax: parseInt(salaryMax),
+      currency,
+    };
+    newJob.requirements = newJob.requirements.split("\n");
+    newJob.responsibilities = newJob.responsibilities.split("\n");
+    // console.log(newJob)
+    fetch("https://job-portal-server-livid.vercel.app/jobs", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(newJob),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.insertedId) {
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Job has been Added",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          // navigate("/myApplication")
+        }
+      });
+  };
   return (
     <div class="card bg-base-100 w-full  mx-auto shadow-2xl">
       <form onSubmit={handleAddJobs} class="card-body">
@@ -70,10 +74,11 @@ const AddJobs = () => {
           <label class="label">
             <span class="label-text">Job Category</span>
           </label>
-          <select defaultValue="Pick a job field" class="select select-ghost w-full max-w">
-            <option disabled >
-              Pick a job field
-            </option>
+          <select
+            defaultValue="Pick a job field"
+            class="select select-ghost w-full max-w"
+          >
+            <option disabled>Pick a job field</option>
             <option>Engineering</option>
             <option>Marketing</option>
             <option>Finance</option>
@@ -85,10 +90,11 @@ const AddJobs = () => {
           <label class="label">
             <span class="label-text">Job Type</span>
           </label>
-          <select defaultValue="Pick Job Type" className="select select-ghost w-full max-w">
-            <option disabled >
-              Pick Job Type
-            </option>
+          <select
+            defaultValue="Pick Job Type"
+            className="select select-ghost w-full max-w"
+          >
+            <option disabled>Pick Job Type</option>
             <option>Full time</option>
             <option>Part Time</option>
             <option>Remote</option>
@@ -106,50 +112,62 @@ const AddJobs = () => {
             required
           />
         </div>
-        {/* salary range */}
-        <p>Salary Range</p>
+       
+        {/* Salary Range Section */}
+        <p className="font-bold mt-4">Salary Range</p>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Salary Range Min</span>
+          {/* Minimum Salary */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Minimum Salary</span>
             </label>
             <input
               type="number"
               name="salaryMin"
-              placeholder="Minimum Salary"
-              class="input input-bordered"
+              placeholder="Enter minimum salary"
+              className="input input-bordered"
               required
+              min="0"
             />
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Salary Range Max</span>
+          {/* Maximum Salary */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Maximum Salary</span>
             </label>
             <input
               type="number"
               name="salaryMax"
-              placeholder="Maximum Salary"
-              class="input input-bordered"
+              placeholder="Enter maximum salary"
+              className="input input-bordered"
               required
+              min="0"
             />
           </div>
 
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Currency</span>
+          {/* Currency */}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Currency</span>
             </label>
-            <select defaultValue="Currency" name="currency" className="select select-ghost w-full max-w">
-              <option disabled >
+            <select
+              name="currency"
+              defaultValue="Currency"
+              className="select select-bordered w-full"
+              required
+            >
+              <option disabled value="Currency">
                 Currency
               </option>
-              <option>BDT</option>
-              <option>USD</option>
-              <option>INR</option>
+              <option value="BDT">BDT</option>
+              <option value="USD">USD</option>
+              <option value="INR">INR</option>
             </select>
           </div>
         </div>
-     {/* description */}
+
+        {/* description */}
         <div class="form-control">
           <label class="label">
             <span class="label-text">Description</span>
@@ -161,7 +179,7 @@ const AddJobs = () => {
             required
           ></textarea>
         </div>
-     {/* company Name */}
+        {/* company Name */}
         <div class="form-control">
           <label class="label">
             <span class="label-text">Company Name</span>
@@ -174,19 +192,17 @@ const AddJobs = () => {
             required
           />
         </div>
-    {/* Requirements */}
+        {/* Requirements */}
         <div class="form-control">
           <label class="label">
             <span class="label-text">Requirements</span>
           </label>
-          <textarea 
-          type="text"
-          name="requirements"
-          placeholder="Put each requirements in a new line"
-          class="textarea textarea-bordered"
-          
+          <textarea
+            type="text"
+            name="requirements"
+            placeholder="Put each requirements in a new line"
+            class="textarea textarea-bordered"
           ></textarea>
-          
         </div>
 
         {/* Responsibilities */}
@@ -194,14 +210,12 @@ const AddJobs = () => {
           <label class="label">
             <span class="label-text">Responsibilities</span>
           </label>
-          <textarea 
-          type="text"
-          name="responsibilities"
-          placeholder="Put each Responsibilities in a new line"
-          class="textarea textarea-bordered"
-          
+          <textarea
+            type="text"
+            name="responsibilities"
+            placeholder="Put each Responsibilities in a new line"
+            class="textarea textarea-bordered"
           ></textarea>
-          
         </div>
 
         <div class="form-control">
@@ -222,6 +236,7 @@ const AddJobs = () => {
           </label>
           <input
             type="email"
+            readOnly
             defaultValue={user?.email}
             name="hr_email"
             placeholder="HR Email"
